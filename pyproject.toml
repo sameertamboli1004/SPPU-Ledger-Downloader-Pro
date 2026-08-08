@@ -1,0 +1,13 @@
+project:
+  name: SPPU Ledger Downloader Pro
+  version: EV-0.1.0
+  codename: Foundation
+  owner: Sameer Alam Tamboli
+  tagline: Automated Examination Ledger Downloader
+  status: Development
+
+technology:
+  language: Python 3.13
+  gui: PySide6
+  automation: Playwright
+  database: SQLite

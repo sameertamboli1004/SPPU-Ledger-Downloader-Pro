@@ -1,0 +1,20 @@
+current_release: EV-0.1.0
+
+modules:
+
+  foundation:
+    status: IN_PROGRESS
+
+  configuration:
+    status: PENDING
+
+  logging:
+    status: PENDING
+
+  database:
+    status: PENDING
+
+  ui:
+    status: PENDING
+
+overall_progress: 5

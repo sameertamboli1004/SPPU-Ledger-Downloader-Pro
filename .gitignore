@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Build
+build/
+dist/
+*.spec
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+logs/
+*.log
+
+# Database
+data/
+*.db
+*.sqlite3
+
+# Temporary
+*.tmp
+*.bak
+*.swp
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Playwright
+playwright-report/
+test-results/
+
+# Python cache
+.pytest_cache/
+.coverage
+htmlcov/
