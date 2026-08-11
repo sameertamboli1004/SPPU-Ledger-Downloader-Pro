@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
 )
 
 from ui.navigation import NavigationPanel
-
+from ui.dashboard import Dashboard
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -30,17 +30,8 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(self.navigation)
 
         # Main content area
-        self.content_label = QLabel(
-            "Welcome to SPPU Ledger Downloader Pro"
-        )
-        self.content_label.setStyleSheet("""
-            QLabel {
-                font-size: 24px;
-                padding: 30px;
-            }
-        """)
-
-        main_layout.addWidget(self.content_label, 1)
+        self.dashboard = Dashboard()
+        main_layout.addWidget(self.dashboard, 1)
 
         self.setCentralWidget(central_widget)
 
@@ -50,9 +41,8 @@ class MainWindow(QMainWindow):
         self.setStatusBar(status_bar)
 
     def page_selected(self, page_name):
-        self.content_label.setText(
-            f"Selected: {page_name.replace('_', ' ').title()}"
-        )
+        if page_name == "dashboard":
+            self.dashboard.show()
 
 
 def main():
