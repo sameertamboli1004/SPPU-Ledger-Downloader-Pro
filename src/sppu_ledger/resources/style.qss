@@ -1,0 +1,37 @@
+QMainWindow {
+    background-color: #f5f7fa;
+}
+
+QFrame {
+    background-color: #ffffff;
+    border: 1px solid #d9dee7;
+    border-radius: 8px;
+}
+
+QLabel {
+    color: #1f2937;
+}
+
+QPushButton {
+    background-color: #ffffff;
+    color: #1f2937;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 14px;
+}
+
+QPushButton:hover {
+    background-color: #eef2f7;
+}
+
+QPushButton:pressed {
+    background-color: #e2e8f0;
+}
+
+QStatusBar {
+    background-color: #ffffff;
+    color: #64748b;
+    border-top: 1px solid #d9dee7;
+}

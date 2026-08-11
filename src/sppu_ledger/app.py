@@ -58,6 +58,14 @@ class MainWindow(QMainWindow):
 def main():
     app = QApplication(sys.argv)
 
+    style_path = "src/sppu_ledger/resources/style.qss"
+
+    try:
+        with open(style_path, "r", encoding="utf-8") as file:
+            app.setStyleSheet(file.read())
+    except FileNotFoundError:
+        print(f"Warning: stylesheet not found: {style_path}")
+
     window = MainWindow()
     window.show()
 
