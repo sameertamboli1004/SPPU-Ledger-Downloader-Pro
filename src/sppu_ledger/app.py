@@ -1,60 +1,129 @@
 import sys
 
+from pathlib import Path
+
 from PySide6.QtWidgets import (
     QApplication,
-    QLabel,
     QMainWindow,
-    QStatusBar,
     QHBoxLayout,
+    QStackedWidget,
     QWidget,
 )
 
-from ui.navigation import NavigationPanel
 from ui.dashboard import Dashboard
+from ui.navigation import NavigationPanel
+from ui.placeholder_page import PlaceholderPage
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
         self.setWindowTitle("SPPU Ledger Downloader Pro")
-        self.resize(1100, 700)
+        self.resize(1200, 720)
 
-        # Main container
+        # Central widget
         central_widget = QWidget()
-        main_layout = QHBoxLayout(central_widget)
+        self.setCentralWidget(central_widget)
 
-        # Navigation panel
+        main_layout = QHBoxLayout(central_widget)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
+
+        # Navigation
         self.navigation = NavigationPanel()
-        self.navigation.page_selected.connect(self.page_selected)
 
         main_layout.addWidget(self.navigation)
 
-        # Main content area
+        # Page container
+        self.pages = QStackedWidget()
+        self.pages.setObjectName("pageContainer")
+
+        main_layout.addWidget(self.pages, 1)
+
+        # Create pages
         self.dashboard = Dashboard()
-        main_layout.addWidget(self.dashboard, 1)
 
-        self.setCentralWidget(central_widget)
+        self.downloader_page = PlaceholderPage(
+            "Ledger Downloader",
+            "The SPPU ledger downloading module will be implemented here."
+        )
 
-        # Status bar
-        status_bar = QStatusBar()
-        status_bar.showMessage("Ready")
-        self.setStatusBar(status_bar)
+        self.history_page = PlaceholderPage(
+            "Download History",
+            "Downloaded ledger records and activity history will appear here."
+        )
 
-    def page_selected(self, page_name):
-        if page_name == "dashboard":
-            self.dashboard.show()
+        self.settings_page = PlaceholderPage(
+            "Settings",
+            "Application and download settings will be configured here."
+        )
+
+        self.about_page = PlaceholderPage(
+            "About",
+            "SPPU Ledger Downloader Pro."
+        )
+
+        # Add pages to stack
+        self.pages.addWidget(self.dashboard)
+        self.pages.addWidget(self.downloader_page)
+        self.pages.addWidget(self.history_page)
+        self.pages.addWidget(self.settings_page)
+        self.pages.addWidget(self.about_page)
+
+        # Navigation connections
+        self.navigation.page_selected.connect(
+            self.show_page
+        )
+
+        self.navigation.toggle_requested.connect(
+            self.toggle_navigation
+        )
+
+        # Start on Dashboard
+        self.pages.setCurrentWidget(self.dashboard)
+
+    def show_page(self, page_name):
+        pages = {
+            "dashboard": self.dashboard,
+            "downloader": self.downloader_page,
+            "history": self.history_page,
+            "settings": self.settings_page,
+            "about": self.about_page,
+        }
+
+        page = pages.get(page_name)
+
+        if page is not None:
+            self.pages.setCurrentWidget(page)
+
+    def toggle_navigation(self):
+        self.navigation.set_expanded(
+            not self.navigation.expanded
+        )
+
+
+def load_stylesheet():
+    stylesheet_path = (
+        Path(__file__).parent
+        / "resources"
+        / "style.qss"
+    )
+
+    if stylesheet_path.exists():
+        return stylesheet_path.read_text(
+            encoding="utf-8"
+        )
+
+    return ""
 
 
 def main():
     app = QApplication(sys.argv)
 
-    style_path = "src/sppu_ledger/resources/style.qss"
-
-    try:
-        with open(style_path, "r", encoding="utf-8") as file:
-            app.setStyleSheet(file.read())
-    except FileNotFoundError:
-        print(f"Warning: stylesheet not found: {style_path}")
+    app.setStyleSheet(
+        load_stylesheet()
+    )
 
     window = MainWindow()
     window.show()

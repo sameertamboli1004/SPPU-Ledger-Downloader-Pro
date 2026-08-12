@@ -1,6 +1,8 @@
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import (
     QFrame,
+    QHBoxLayout,
+    QLabel,
     QPushButton,
     QVBoxLayout,
 )
@@ -8,58 +10,96 @@ from PySide6.QtWidgets import (
 
 class NavigationPanel(QFrame):
     page_selected = Signal(str)
+    toggle_requested = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.setFrameShape(QFrame.StyledPanel)
-        self.setMinimumWidth(60)
-        self.setMaximumWidth(220)
+        self.setObjectName("navigationPanel")
+        self.expanded = True
 
         layout = QVBoxLayout(self)
+        layout.setContentsMargins(10, 15, 10, 15)
+        layout.setSpacing(6)
+
+        # Header
+        header = QHBoxLayout()
+        header.setSpacing(8)
 
         self.toggle_button = QPushButton("☰")
-        self.toggle_button.setFixedHeight(40)
-        self.toggle_button.clicked.connect(self.toggle)
+        self.toggle_button.setObjectName("navToggle")
+        self.toggle_button.setFixedSize(40, 40)
+        self.toggle_button.clicked.connect(self.toggle_requested.emit)
 
-        layout.addWidget(self.toggle_button)
+        self.logo_label = QLabel("SPPU Ledger")
+        self.logo_label.setObjectName("navLogo")
 
-        self.buttons = []
+        header.addWidget(self.toggle_button)
+        header.addWidget(self.logo_label)
 
-        self.add_navigation_button("Dashboard", "dashboard", layout)
-        self.add_navigation_button("Download Ledger", "download", layout)
-        self.add_navigation_button("Download History", "history", layout)
-        self.add_navigation_button("Settings", "settings", layout)
+        layout.addLayout(header)
+
+        # Navigation buttons
+        self.buttons = {}
+
+        pages = [
+            ("dashboard", "Dashboard"),
+            ("downloader", "Ledger Downloader"),
+            ("history", "Download History"),
+            ("settings", "Settings"),
+            ("about", "About"),
+        ]
+
+        for page_id, title in pages:
+            button = QPushButton(title)
+            button.setObjectName("navButton")
+            button.setMinimumHeight(42)
+
+            button.clicked.connect(
+                lambda checked=False, page=page_id:
+                self.page_selected.emit(page)
+            )
+
+            self.buttons[page_id] = button
+            layout.addWidget(button)
 
         layout.addStretch()
 
-        self.expanded = True
+        self.setFixedWidth(230)
 
-    def add_navigation_button(self, text, page_name, layout):
-        button = QPushButton(text)
-        button.setFixedHeight(42)
-        button.clicked.connect(
-            lambda: self.page_selected.emit(page_name)
-        )
+    def set_expanded(self, expanded):
+        self.expanded = expanded
 
-        self.buttons.append(button)
-        layout.addWidget(button)
+        if expanded:
+            self.setFixedWidth(230)
+            self.logo_label.show()
 
-    def toggle(self):
-        self.expanded = not self.expanded
-
-        if self.expanded:
-            self.setMaximumWidth(220)
-
-            self.toggle_button.setText("☰")
-
-            for button in self.buttons:
-                button.show()
+            for page_id, button in self.buttons.items():
+                button.setText(self._button_title(page_id))
 
         else:
-            self.setMaximumWidth(60)
+            self.setFixedWidth(65)
+            self.logo_label.hide()
 
-            self.toggle_button.setText("☰")
+            symbols = {
+                "dashboard": "⌂",
+                "downloader": "↓",
+                "history": "↶",
+                "settings": "⚙",
+                "about": "ⓘ",
+            }
 
-            for button in self.buttons:
-                button.hide()
+            for page_id, button in self.buttons.items():
+                button.setText(symbols[page_id])
+
+    @staticmethod
+    def _button_title(page_id):
+        titles = {
+            "dashboard": "Dashboard",
+            "downloader": "Ledger Downloader",
+            "history": "Download History",
+            "settings": "Settings",
+            "about": "About",
+        }
+
+        return titles[page_id]
