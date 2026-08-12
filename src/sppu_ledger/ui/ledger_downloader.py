@@ -4,6 +4,7 @@ from PySide6.QtWidgets import (
     QFormLayout,
     QGroupBox,
     QLabel,
+    QProgressBar,
     QPushButton,
     QVBoxLayout,
 )
@@ -29,8 +30,12 @@ class LedgerDownloader(QFrame):
         layout.addWidget(title)
         layout.addWidget(subtitle)
 
-        # Configuration group
-        config_group = QGroupBox("SPPU Ledger Configuration")
+        # -------------------------------------------------
+        # SPPU Ledger Configuration
+        # -------------------------------------------------
+        config_group = QGroupBox(
+            "SPPU Ledger Configuration"
+        )
         config_group.setObjectName("configGroup")
 
         form = QFormLayout(config_group)
@@ -38,13 +43,17 @@ class LedgerDownloader(QFrame):
         form.setVerticalSpacing(15)
         form.setHorizontalSpacing(20)
 
-        # University
+        # University / Portal
         self.university_combo = QComboBox()
         self.university_combo.addItem("SPPU")
+        self.university_combo.setEnabled(False)
 
-        form.addRow("University / Portal", self.university_combo)
+        form.addRow(
+            "University / Portal",
+            self.university_combo,
+        )
 
-        # Academic year
+        # Academic Year
         self.academic_year_combo = QComboBox()
         self.academic_year_combo.addItems(
             [
@@ -54,27 +63,32 @@ class LedgerDownloader(QFrame):
             ]
         )
 
-        form.addRow("Academic Year", self.academic_year_combo)
-
-        # Examination
-        self.examination_combo = QComboBox()
-        self.examination_combo.addItem(
-            "Select examination"
+        form.addRow(
+            "Academic Year",
+            self.academic_year_combo,
         )
 
-        form.addRow("Examination", self.examination_combo)
+        # Exam Session / Period
+        self.session_combo = QComboBox()
 
-        # Ledger type
-        self.ledger_type_combo = QComboBox()
-        self.ledger_type_combo.addItem(
-            "Select ledger type"
+        self.session_combo.addItem(
+            "Select session / period"
         )
 
-        form.addRow("Ledger Type", self.ledger_type_combo)
+        # Session / period options will be
+        # populated dynamically from the SPPU portal.
+        self.session_combo.setEnabled(False)
+
+        form.addRow(
+            "Exam Session / Period",
+            self.session_combo,
+        )
 
         layout.addWidget(config_group)
 
-        # Download button
+        # -------------------------------------------------
+        # Download Button
+        # -------------------------------------------------
         self.download_button = QPushButton(
             "Start Download"
         )
@@ -87,13 +101,49 @@ class LedgerDownloader(QFrame):
             self.start_download
         )
 
-        layout.addWidget(self.download_button)
+        layout.addWidget(
+            self.download_button
+        )
 
-        # Status section
+        # -------------------------------------------------
+        # Progress
+        # -------------------------------------------------
+        progress_group = QGroupBox("Progress")
+        progress_group.setObjectName(
+            "statusGroup"
+        )
+
+        progress_layout = QVBoxLayout(
+            progress_group
+        )
+        progress_layout.setContentsMargins(
+            20, 15, 20, 15
+        )
+
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setRange(0, 100)
+        self.progress_bar.setValue(0)
+        self.progress_bar.setTextVisible(True)
+
+        progress_layout.addWidget(
+            self.progress_bar
+        )
+
+        layout.addWidget(
+            progress_group
+        )
+
+        # -------------------------------------------------
+        # Status
+        # -------------------------------------------------
         status_group = QGroupBox("Status")
-        status_group.setObjectName("statusGroup")
+        status_group.setObjectName(
+            "statusGroup"
+        )
 
-        status_layout = QVBoxLayout(status_group)
+        status_layout = QVBoxLayout(
+            status_group
+        )
         status_layout.setContentsMargins(
             20, 15, 20, 15
         )
@@ -105,13 +155,47 @@ class LedgerDownloader(QFrame):
             "statusLabel"
         )
 
-        status_layout.addWidget(self.status_label)
+        status_layout.addWidget(
+            self.status_label
+        )
 
-        layout.addWidget(status_group)
+        layout.addWidget(
+            status_group
+        )
 
         layout.addStretch()
 
     def start_download(self):
-        self.status_label.setText(
-            "Download function will be connected to the SPPU service."
+        academic_year = (
+            self.academic_year_combo.currentText()
         )
+
+        session = (
+            self.session_combo.currentText()
+        )
+
+        if session == "Select session / period":
+            self.status_label.setText(
+                "Please select an exam session / period."
+            )
+            return
+
+        self.download_button.setEnabled(False)
+
+        self.status_label.setText(
+            f"Preparing SPPU Ledger download — "
+            f"{academic_year}, {session}"
+        )
+
+        self.progress_bar.setValue(10)
+
+        # Actual SPPU portal downloader service
+        # will be connected here.
+
+        self.progress_bar.setValue(100)
+
+        self.status_label.setText(
+            "Download service is ready to be connected."
+        )
+
+        self.download_button.setEnabled(True)

@@ -131,3 +131,17 @@ QComboBox:focus {
     color: #64748b;
     font-size: 14px;
 }
+/* Downloader Progress */
+
+QProgressBar {
+    min-height: 22px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background-color: #f1f5f9;
+    text-align: center;
+}
+
+QProgressBar::chunk {
+    background-color: #2563eb;
+    border-radius: 5px;
+}
