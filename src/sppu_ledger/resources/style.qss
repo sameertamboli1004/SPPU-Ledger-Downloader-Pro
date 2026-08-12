@@ -79,3 +79,55 @@ QStatusBar {
     padding: 15px;
     color: #64748b;
 }
+/* Ledger Downloader */
+
+#configGroup,
+#statusGroup {
+    background-color: #ffffff;
+    border: 1px solid #d9dee7;
+    border-radius: 10px;
+    margin-top: 5px;
+}
+
+#configGroup::title,
+#statusGroup::title {
+    subcontrol-origin: margin;
+    left: 15px;
+    padding: 0 6px;
+    color: #1f2937;
+    font-weight: bold;
+}
+
+QComboBox {
+    min-height: 36px;
+    padding: 4px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background-color: #ffffff;
+}
+
+QComboBox:focus {
+    border: 1px solid #64748b;
+}
+
+#primaryButton {
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 7px;
+    padding: 8px 20px;
+    font-weight: bold;
+}
+
+#primaryButton:hover {
+    background-color: #1d4ed8;
+}
+
+#primaryButton:pressed {
+    background-color: #1e40af;
+}
+
+#statusLabel {
+    color: #64748b;
+    font-size: 14px;
+}

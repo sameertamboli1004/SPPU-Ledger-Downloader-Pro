@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
 )
 
 from ui.dashboard import Dashboard
+from ui.ledger_downloader import LedgerDownloader
 from ui.navigation import NavigationPanel
 from ui.placeholder_page import PlaceholderPage
 
@@ -19,59 +20,79 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("SPPU Ledger Downloader Pro")
+        self.setWindowTitle(
+            "SPPU Ledger Downloader Pro"
+        )
         self.resize(1200, 720)
 
-        # Central widget
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
 
-        main_layout = QHBoxLayout(central_widget)
-        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout = QHBoxLayout(
+            central_widget
+        )
+        main_layout.setContentsMargins(
+            0, 0, 0, 0
+        )
         main_layout.setSpacing(0)
 
         # Navigation
         self.navigation = NavigationPanel()
-
-        main_layout.addWidget(self.navigation)
+        main_layout.addWidget(
+            self.navigation
+        )
 
         # Page container
         self.pages = QStackedWidget()
-        self.pages.setObjectName("pageContainer")
+        self.pages.setObjectName(
+            "pageContainer"
+        )
 
-        main_layout.addWidget(self.pages, 1)
+        main_layout.addWidget(
+            self.pages,
+            1,
+        )
 
-        # Create pages
+        # Main pages
         self.dashboard = Dashboard()
 
-        self.downloader_page = PlaceholderPage(
-            "Ledger Downloader",
-            "The SPPU ledger downloading module will be implemented here."
+        self.downloader_page = (
+            LedgerDownloader()
         )
 
         self.history_page = PlaceholderPage(
             "Download History",
-            "Downloaded ledger records and activity history will appear here."
+            "Downloaded ledger records and activity history will appear here.",
         )
 
         self.settings_page = PlaceholderPage(
             "Settings",
-            "Application and download settings will be configured here."
+            "Application and download settings will be configured here.",
         )
 
         self.about_page = PlaceholderPage(
             "About",
-            "SPPU Ledger Downloader Pro."
+            "SPPU Ledger Downloader Pro.",
         )
 
-        # Add pages to stack
-        self.pages.addWidget(self.dashboard)
-        self.pages.addWidget(self.downloader_page)
-        self.pages.addWidget(self.history_page)
-        self.pages.addWidget(self.settings_page)
-        self.pages.addWidget(self.about_page)
+        # Add pages
+        self.pages.addWidget(
+            self.dashboard
+        )
+        self.pages.addWidget(
+            self.downloader_page
+        )
+        self.pages.addWidget(
+            self.history_page
+        )
+        self.pages.addWidget(
+            self.settings_page
+        )
+        self.pages.addWidget(
+            self.about_page
+        )
 
-        # Navigation connections
+        # Navigation events
         self.navigation.page_selected.connect(
             self.show_page
         )
@@ -80,8 +101,10 @@ class MainWindow(QMainWindow):
             self.toggle_navigation
         )
 
-        # Start on Dashboard
-        self.pages.setCurrentWidget(self.dashboard)
+        # Initial page
+        self.pages.setCurrentWidget(
+            self.dashboard
+        )
 
     def show_page(self, page_name):
         pages = {
